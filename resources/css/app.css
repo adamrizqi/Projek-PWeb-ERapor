@@ -1,0 +1,18 @@
+[x-cloak] {
+    display: none !important;
+}
+
+@tailwind base;
+@tailwind components;
+
+.sidebar-nav::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    background: transparent; /* Sembunyikan di Chrome/Safari */
+}
+.sidebar-nav {
+    -ms-overflow-style: none;  /* Sembunyikan di IE/Edge */
+    scrollbar-width: none;  /* Sembunyikan di Firefox */
+}
+
+@tailwind utilities;
