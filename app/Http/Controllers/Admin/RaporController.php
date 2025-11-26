@@ -14,7 +14,6 @@ class RaporController extends Controller
 
     public function __construct()
     {
-        // Sesuaikan dengan settingan aktif
         $this->semester = 1;
         $this->tahunAjaran = '2024/2025';
     }
@@ -26,7 +25,6 @@ class RaporController extends Controller
     {
         $data = $this->getRaporData($siswa);
 
-        // Kita bisa menggunakan view yang sama dengan guru untuk konsistensi
         return view('guru.rapor.show', $data);
     }
 
@@ -38,7 +36,6 @@ class RaporController extends Controller
         try {
             $data = $this->getRaporData($siswa);
 
-            // Gunakan view PDF yang sama dengan guru
             $pdf = Pdf::loadView('guru.rapor.pdf', $data);
 
             $pdf->setPaper('A4', 'portrait');

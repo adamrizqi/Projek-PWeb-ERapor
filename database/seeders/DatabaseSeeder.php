@@ -19,12 +19,11 @@ class DatabaseSeeder extends Seeder
         $this->command->info('🚀 Memulai seeding database...');
         $this->command->info('=====================================');
 
-        // Urutan seeding penting!
         $this->call([
-            AdminSeeder::class,          // 1. Buat admin dulu
-            KelasSeeder::class,          // 2. Buat kelas
-            GuruSeeder::class,           // 3. Buat guru dan assign ke kelas
-            MataPelajaranSeeder::class,  // 4. Buat mata pelajaran
+            AdminSeeder::class,
+            KelasSeeder::class,
+            GuruSeeder::class,
+            MataPelajaranSeeder::class,
         ]);
 
         $this->command->info('=====================================');

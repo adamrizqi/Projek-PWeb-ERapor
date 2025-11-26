@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('siswa_id');
             $table->unsignedBigInteger('mata_pelajaran_id');
-            $table->integer('semester'); // 1 atau 2
+            $table->integer('semester');
             $table->string('tahun_ajaran', 9);
             $table->integer('nilai_pengetahuan')->nullable();
             $table->integer('nilai_keterampilan')->nullable();
-            $table->integer('nilai_akhir')->nullable(); // rata-rata
-            $table->char('predikat', 1)->nullable(); // A, B, C, D
+            $table->integer('nilai_akhir')->nullable();
+            $table->char('predikat', 1)->nullable(); 
             $table->text('deskripsi')->nullable();
             $table->timestamps();
 

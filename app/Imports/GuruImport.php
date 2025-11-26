@@ -27,12 +27,10 @@ class GuruImport implements
     {
         foreach ($rows as $row)
         {
-            // 1. Cek duplikasi email atau NIP
             $emailExists = User::where('email', $row['email'])->exists();
             $nipExists = User::where('nip', $row['nip'])->exists();
 
             if ($emailExists || $nipExists) {
-                // Log jika data dilewati, lalu lanjut ke baris berikutnya
                 Log::warning('Data guru dilewati saat import (Email/NIP sudah ada)', [
                     'nama' => $row['nama_lengkap'],
                     'nip' => $row['nip'],
@@ -41,11 +39,8 @@ class GuruImport implements
                 continue;
             }
 
-            // 2. Siapkan password
-            // Jika kolom password di Excel kosong, buat password default 'guru123'
             $password = !empty($row['password']) ? $row['password'] : 'guru123';
 
-            // 3. Buat user baru
             User::create([
                 'name' => $row['nama_lengkap'],
                 'nip' => $row['nip'],
@@ -53,13 +48,12 @@ class GuruImport implements
                 'phone' => $row['no_hp'],
                 'address' => $row['alamat'],
                 'password' => Hash::make($password),
-                'role' => 'guru', // Otomatis set sebagai guru
-                'email_verified_at' => now(), // Anggap sudah terverifikasi
+                'role' => 'guru',
+                'email_verified_at' => now(),
             ]);
         }
     }
 
-    // Tentukan aturan validasi untuk setiap kolom
     public function rules(): array
     {
         return [
@@ -72,7 +66,6 @@ class GuruImport implements
         ];
     }
 
-    // Pesan error kustom
     public function customValidationMessages()
     {
         return [
@@ -85,13 +78,11 @@ class GuruImport implements
         ];
     }
 
-    // Untuk performa: baca file per 100 baris
     public function chunkSize(): int
     {
         return 100;
     }
 
-    // Untuk performa: insert ke DB per 100 baris
     public function batchSize(): int
     {
         return 100;

@@ -13,8 +13,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     protected $kelas_id;
 
     /**
-     * [REVISI]
-     * Buat constructor untuk menerima kelas_id (opsional)
+     * Buat constructor untuk menerima kelas_id
      */
     public function __construct($kelas_id = null)
     {
@@ -26,13 +25,11 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
     */
     public function collection()
     {
-        // Mulai query dasar
         $query = Siswa::with('kelas')
                     ->where('status', 'aktif')
                     ->join('kelas', 'siswa.kelas_id', '=', 'kelas.id');
 
         /**
-         * [REVISI]
          * Tambahkan filter WHERE jika kelas_id diberikan
          */
         if ($this->kelas_id) {
@@ -43,7 +40,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
         return $query->orderBy('kelas.tingkat', 'asc')
                     ->orderBy('kelas.nama_kelas', 'asc')
                     ->orderBy('siswa.nama_lengkap', 'asc')
-                    ->select('siswa.*') // Pilih kolom siswa agar tidak bentrok
+                    ->select('siswa.*')
                     ->get();
     }
 
@@ -52,7 +49,6 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
      */
     public function headings(): array
     {
-        // (Tidak ada perubahan di sini)
         return [
             'NIS',
             'NISN',
@@ -84,7 +80,7 @@ class SiswaExport implements FromCollection, WithHeadings, WithMapping, ShouldAu
             $siswa->alamat,
             $siswa->nama_wali,
             $siswa->phone_wali,
-            ucfirst($siswa->status), 
+            ucfirst($siswa->status),
         ];
     }
 }

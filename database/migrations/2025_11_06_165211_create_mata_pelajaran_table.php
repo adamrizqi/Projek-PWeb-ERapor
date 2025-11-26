@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('nama_mapel', 100);
             $table->string('kode_mapel', 20)->unique();
-            $table->integer('tingkat'); // 1-6
-            $table->integer('kkm')->default(70); // Kriteria Ketuntasan Minimal
+            $table->integer('tingkat');
+            $table->integer('kkm')->default(70);
             $table->timestamps();
         });
     }

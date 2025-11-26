@@ -5,9 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Kelas -->
         <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
@@ -25,7 +23,6 @@
             </a>
         </div>
 
-        <!-- Total Siswa -->
         <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
@@ -43,7 +40,6 @@
             </a>
         </div>
 
-        <!-- Total Guru -->
         <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
@@ -61,7 +57,6 @@
             </a>
         </div>
 
-        <!-- Total Mata Pelajaran -->
         <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
@@ -81,9 +76,7 @@
         </div>
     </div>
 
-    <!-- Charts & Info -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Siswa Per Tingkat -->
         <x-card title="Siswa Per Tingkat">
             <div class="space-y-4">
                 @foreach($siswa_per_tingkat as $data)
@@ -100,7 +93,6 @@
             </div>
         </x-card>
 
-        <!-- Quick Actions -->
         <x-card title="Quick Actions">
             <div class="grid grid-cols-2 gap-4">
                 <a href="{{ route('admin.kelas.create') }}" class="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
@@ -134,7 +126,6 @@
         </x-card>
     </div>
 
-    <!-- Alerts -->
     @if($kelas_tanpa_wali > 0 || $guru_tanpa_kelas > 0)
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         @if($kelas_tanpa_wali > 0)
@@ -167,7 +158,6 @@
     </div>
     @endif
 
-    <!-- Recent Classes -->
     <x-card title="Kelas Terbaru">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">

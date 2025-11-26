@@ -79,9 +79,7 @@ class User extends Authenticatable
     public function getNamaPendekAttribute()
     {
         $nama = $this->name;
-        // Hilangkan gelar depan
         $nama = preg_replace('/^(Bapak|Ibu|Pak|Bu)\s+/i', '', $nama);
-        // Hilangkan gelar belakang
         $nama = preg_replace('/,?\s*(S\.Pd|M\.Pd|S\.Ag|M\.Ag).*$/i', '', $nama);
         return trim($nama);
     }

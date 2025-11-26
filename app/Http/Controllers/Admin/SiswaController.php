@@ -7,58 +7,54 @@ use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+// IMPORT & EXPORT
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SiswaImport;
 use App\Exports\SiswaExport;
 
+// [PENTING] KITA PAKAI SDK ASLI, BUKAN FACADE LARAVEL
+use Cloudinary\Cloudinary;
 
 class SiswaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Helper: Buat koneksi Cloudinary Manual (Anti-Gagal)
      */
+    private function getCloudinary()
+    {
+        return new Cloudinary([
+            'cloud' => [
+                'cloud_name' => 'dcucamoen',
+                'api_key'    => '444921569648525',
+                'api_secret' => '6q81eGnIUCi_8UlPxu_-9exrcoI',
+            ],
+            'url' => [
+                'secure' => true
+            ]
+        ]);
+    }
+
     public function index(Request $request)
     {
         $query = Siswa::with('kelas');
-
-        if ($request->filled('kelas_id')) {
-            $query->where('kelas_id', $request->kelas_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('jenis_kelamin')) {
-            $query->where('jenis_kelamin', $request->jenis_kelamin);
-        }
-
-        if ($request->filled('search')) {
-            $query->search($request->search);
-        }
+        if ($request->filled('kelas_id')) $query->where('kelas_id', $request->kelas_id);
+        if ($request->filled('status')) $query->where('status', $request->status);
+        if ($request->filled('jenis_kelamin')) $query->where('jenis_kelamin', $request->jenis_kelamin);
+        if ($request->filled('search')) $query->search($request->search);
 
         $siswa = $query->orderBy('nama_lengkap')->paginate(20);
-
         $kelasList = Kelas::orderBy('tingkat')->orderBy('nama_kelas')->get();
-
         return view('admin.siswa.index', compact('siswa', 'kelasList'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $kelasList = Kelas::orderBy('tingkat')->orderBy('nama_kelas')->get();
-
         return view('admin.siswa.create', compact('kelasList'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -77,69 +73,53 @@ class SiswaController extends Controller
 
         DB::beginTransaction();
         try {
+            // [UPLOAD MANUAL]
             if ($request->hasFile('foto')) {
+                $cld = $this->getCloudinary();
                 $file = $request->file('foto');
-                $filename = 'siswa_' . time() . '_' . Str::slug($validated['nama_lengkap']) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('siswa', $filename, 'public');
-                $validated['foto'] = $path;
+
+                // Upload menggunakan API langsung
+                $upload = $cld->uploadApi()->upload($file->getRealPath(), [
+                    'folder' => 'siswa'
+                ]);
+
+                // Ambil Public ID dari response array
+                $validated['foto'] = $upload['public_id'];
             }
 
             $validated['status'] = 'aktif';
-
             $siswa = Siswa::create($validated);
 
             DB::commit();
-
-            return redirect()->route('admin.siswa.index')
-                ->with('success', "Siswa {$siswa->nama_lengkap} berhasil ditambahkan.");
+            return redirect()->route('admin.siswa.index')->with('success', "Siswa {$siswa->nama_lengkap} berhasil ditambahkan.");
         } catch (\Exception $e) {
             DB::rollBack();
-
-            if (isset($validated['foto'])) {
-                Storage::disk('public')->delete($validated['foto']);
-            }
-
-            return back()->withInput()
-                ->with('error', 'Gagal menambahkan siswa: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal menambahkan siswa: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Siswa $siswa)
     {
         $siswa->load('kelas.waliKelas');
-
         $semester = 1;
         $tahunAjaran = '2024/2025';
-
         $nilai = $siswa->getNilai($semester, $tahunAjaran);
         $kehadiran = $siswa->getKehadiran($semester, $tahunAjaran);
         $sikap = $siswa->getSikap($semester, $tahunAjaran);
-
         $statistik = [
             'rata_rata_nilai' => $siswa->getRataRataNilai($semester, $tahunAjaran),
             'ranking' => $siswa->getRankingKelas($semester, $tahunAjaran),
             'persentase_rapor' => $siswa->getPersentaseKelengkapanRapor($semester, $tahunAjaran),
         ];
-
         return view('admin.siswa.show', compact('siswa', 'nilai', 'kehadiran', 'sikap', 'statistik'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Siswa $siswa)
     {
         $kelasList = Kelas::orderBy('tingkat')->orderBy('nama_kelas')->get();
-
         return view('admin.siswa.edit', compact('siswa', 'kelasList'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Siswa $siswa)
     {
         $validated = $request->validate([
@@ -159,147 +139,139 @@ class SiswaController extends Controller
 
         DB::beginTransaction();
         try {
+            // [UPDATE MANUAL]
             if ($request->hasFile('foto')) {
+                $cld = $this->getCloudinary();
+                $file = $request->file('foto');
+
+                // Hapus lama
                 if ($siswa->foto) {
-                    Storage::disk('public')->delete($siswa->foto);
+                    try {
+                        $cld->uploadApi()->destroy($siswa->foto);
+                    } catch (\Exception $e) {}
                 }
 
-                $file = $request->file('foto');
-                $filename = 'siswa_' . time() . '_' . Str::slug($validated['nama_lengkap']) . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('siswa', $filename, 'public');
-                $validated['foto'] = $path;
+                // Upload baru
+                $upload = $cld->uploadApi()->upload($file->getRealPath(), [
+                    'folder' => 'siswa'
+                ]);
+                $validated['foto'] = $upload['public_id'];
             }
 
             $siswa->update($validated);
-
             DB::commit();
-
-            return redirect()->route('admin.siswa.show', $siswa)
-                ->with('success', "Data siswa {$siswa->nama_lengkap} berhasil diperbarui.");
+            return redirect()->route('admin.siswa.show', $siswa)->with('success', "Data siswa {$siswa->nama_lengkap} berhasil diperbarui.");
         } catch (\Exception $e) {
             DB::rollBack();
-
-            if (isset($validated['foto']) && $validated['foto'] != $siswa->foto) {
-                Storage::disk('public')->delete($validated['foto']);
-            }
-
-            return back()->withInput()
-                ->with('error', 'Gagal memperbarui data siswa: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memperbarui data siswa: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Siswa $siswa)
     {
         DB::beginTransaction();
         try {
+            // [HAPUS MANUAL]
             if ($siswa->foto) {
-                Storage::disk('public')->delete($siswa->foto);
+                try {
+                    $cld = $this->getCloudinary();
+                    $cld->uploadApi()->destroy($siswa->foto);
+                } catch (\Exception $e) {}
             }
 
             $nama = $siswa->nama_lengkap;
-
             $siswa->delete();
-
             DB::commit();
-
-            return redirect()->route('admin.siswa.index')
-                ->with('success', "Siswa {$nama} beserta semua data terkait berhasil dihapus.");
+            return redirect()->route('admin.siswa.index')->with('success', "Siswa {$nama} berhasil dihapus.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal menghapus siswa: ' . $e->getMessage());
         }
     }
 
+    public function uploadFoto(Request $request, Siswa $siswa)
+    {
+        $request->validate(['foto' => 'required|image|mimes:jpeg,png,jpg|max:2048']);
+        DB::beginTransaction();
+        try {
+            $cld = $this->getCloudinary();
+            $file = $request->file('foto');
 
-    /**
-     * Pindah kelas
-     */
+            if ($siswa->foto) {
+                try {
+                    $cld->uploadApi()->destroy($siswa->foto);
+                } catch (\Exception $e) {}
+            }
+
+            $upload = $cld->uploadApi()->upload($file->getRealPath(), [
+                'folder' => 'siswa'
+            ]);
+
+            $siswa->update(['foto' => $upload['public_id']]);
+            DB::commit();
+            return back()->with('success', 'Foto siswa berhasil diupload.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Gagal upload foto: ' . $e->getMessage());
+        }
+    }
+
     public function pindahKelas(Request $request, Siswa $siswa)
     {
         $validated = $request->validate([
             'kelas_baru_id' => 'required|exists:kelas,id|different:' . $siswa->kelas_id,
         ]);
-
         DB::beginTransaction();
         try {
             $kelasLama = $siswa->kelas->nama_kelas;
             $siswa->update(['kelas_id' => $validated['kelas_baru_id']]);
             $kelasBaru = $siswa->kelas->nama_kelas;
-
             DB::commit();
-
-            return back()->with('success',
-                "{$siswa->nama_lengkap} berhasil dipindahkan dari kelas {$kelasLama} ke {$kelasBaru}.");
+            return back()->with('success', "{$siswa->nama_lengkap} berhasil dipindahkan.");
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Gagal memindahkan kelas: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Update status siswa
-     */
     public function updateStatus(Request $request, Siswa $siswa)
     {
-        $validated = $request->validate([
-            'status' => 'required|in:aktif,lulus,pindah,keluar',
-        ]);
-
+        $validated = $request->validate(['status' => 'required|in:aktif,lulus,pindah,keluar']);
         $siswa->update($validated);
-
-        return back()->with('success',
-            "Status siswa {$siswa->nama_lengkap} berhasil diubah menjadi {$validated['status']}.");
+        return back()->with('success', "Status siswa {$siswa->nama_lengkap} berhasil diubah.");
     }
 
-    /**
-     * Import siswa dari Excel/CSV
-     */
     public function import(Request $request)
     {
         $validated = $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv|max:5120', // Maks 5MB
+            'file' => 'required|mimes:xlsx,xls,csv|max:5120',
             'kelas_id' => 'required|exists:kelas,id',
         ]);
-
         try {
-
             Excel::import(new SiswaImport($validated['kelas_id']), $request->file('file'));
-
-            return redirect()->route('admin.siswa.index')
-                ->with('success', 'Data siswa berhasil diimpor.');
-
+            return redirect()->route('admin.siswa.index')->with('success', 'Data siswa berhasil diimpor.');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
              $failures = $e->failures();
              $errorMessages = [];
              foreach ($failures as $failure) {
-                 $attribute = $failure->attribute();
-                 $errorMessages[] = 'Baris ' . $failure->row() . ' (Kolom: ' . $attribute . '): ' . implode(', ', $failure->errors());
+                 $errorMessages[] = 'Baris ' . $failure->row() . ': ' . implode(', ', $failure->errors());
              }
              return back()->with('error', 'Gagal mengimpor data: ' . implode(' | ', $errorMessages));
-
         } catch (\Exception $e) {
-            return back()->with('error', 'Terjadi kesalahan saat mengimpor: ' . $e->getMessage());
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
-/**
-     * Export siswa ke Excel
-     */
     public function export(Kelas $kelas = null)
     {
         $date = date('Y-m-d');
-
         if ($kelas) {
             $filename = "daftar_siswa_kelas_{$kelas->nama_kelas}_{$date}.xlsx";
-            $export = new SiswaExport($kelas->id); // Kirim kelas_id ke constructor
+            $export = new SiswaExport($kelas->id);
         } else {
             $filename = "daftar_siswa_SEMUA_{$date}.xlsx";
-            $export = new SiswaExport(null); // Kirim null
+            $export = new SiswaExport(null);
         }
-
         return Excel::download($export, $filename);
     }
 }

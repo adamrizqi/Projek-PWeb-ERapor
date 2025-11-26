@@ -14,7 +14,6 @@ class MataPelajaranSeeder extends Seeder
     public function run(): void
     {
         $mataPelajaran = [
-            // Kelas 1-3 (Kelas Rendah)
             [
                 'tingkat' => [1, 2, 3],
                 'mapel' => [
@@ -26,7 +25,6 @@ class MataPelajaranSeeder extends Seeder
                     ['nama' => 'Seni Musik dan Tari', 'kode' => 'SBD', 'kkm' => 75],
                 ]
             ],
-            // Kelas 4-6 (Kelas Tinggi)
             [
                 'tingkat' => [4, 5, 6],
                 'mapel' => [
@@ -48,7 +46,6 @@ class MataPelajaranSeeder extends Seeder
         foreach ($mataPelajaran as $group) {
             foreach ($group['tingkat'] as $tingkat) {
                 foreach ($group['mapel'] as $mapel) {
-                    // Cek apakah sudah ada
                     $exists = MataPelajaran::where('kode_mapel', $mapel['kode'])
                         ->where('tingkat', $tingkat)
                         ->first();

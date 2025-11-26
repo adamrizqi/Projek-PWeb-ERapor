@@ -1,5 +1,4 @@
 <div class="flex flex-col h-full">
-    <!-- Logo -->
     <div class="flex items-center justify-center h-16 px-4 border-b border-blue-700">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
@@ -12,10 +11,8 @@
         </div>
     </div>
 
-    <!-- Navigation -->
     <nav class="sidebar-nav flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         @if(Auth::user()->role === 'admin')
-            <!-- Admin Menu -->
             <a href="{{ route('admin.dashboard') }}"
                class="flex items-center px-4 py-3 text-white rounded-lg {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }} transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +98,7 @@
             </a>
 
         @else
-            <!-- Guru Menu -->
+
             <a href="{{ route('guru.dashboard') }}"
                class="flex items-center px-4 py-3 text-white rounded-lg {{ request()->routeIs('guru.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }} transition">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +169,6 @@
         @endif
     </nav>
 
-    <!-- User Info -->
     <div class="p-4 border-t border-blue-700">
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 font-semibold">

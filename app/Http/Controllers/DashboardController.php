@@ -29,7 +29,6 @@ class DashboardController extends Controller
             return redirect()->route('guru.dashboard');
         }
 
-        // Fallback jika role tidak dikenali
         Auth::logout();
         return redirect()->route('login')->with('error', 'Role tidak valid.');
     }
@@ -45,7 +44,6 @@ class DashboardController extends Controller
             'total_guru' => User::where('role', 'guru')->count(),
             'total_mapel' => MataPelajaran::count(),
 
-            // Statistik per tingkat
             'siswa_per_tingkat' => Siswa::selectRaw('kelas.tingkat, COUNT(*) as total')
                 ->join('kelas', 'siswa.kelas_id', '=', 'kelas.id')
                 ->where('siswa.status', 'aktif')
@@ -53,15 +51,12 @@ class DashboardController extends Controller
                 ->orderBy('kelas.tingkat')
                 ->get(),
 
-            // Kelas tanpa wali
             'kelas_tanpa_wali' => Kelas::whereNull('wali_kelas_id')->count(),
 
-            // Guru tanpa kelas
             'guru_tanpa_kelas' => User::where('role', 'guru')
                 ->whereNull('kelas_id')
                 ->count(),
 
-            // Recent activities (contoh)
             'recent_classes' => Kelas::with('waliKelas')
                 ->latest()
                 ->take(5)
@@ -88,13 +83,10 @@ class DashboardController extends Controller
             'total_siswa' => $kelas->siswaAktif()->count(),
             'siswa_list' => $kelas->siswaAktif()->get(),
 
-            // Statistik nilai
             'rata_rata_kelas' => $kelas->getRataRataNilaiKelas(),
 
-            // Mata pelajaran
             'mata_pelajaran' => MataPelajaran::where('tingkat', $kelas->tingkat)->get(),
 
-            // Progress kelengkapan data
             'progress_nilai' => $this->hitungProgressNilai($kelas->id),
             'progress_kehadiran' => $this->hitungProgressKehadiran($kelas->id),
             'progress_sikap' => $this->hitungProgressSikap($kelas->id),
@@ -124,7 +116,6 @@ class DashboardController extends Controller
 
         $nilai = $query->get();
 
-        // Statistik
         $statistik = [
             'total_nilai' => $nilai->count(),
             'rata_rata_keseluruhan' => round($nilai->avg('nilai_akhir'), 2),
@@ -158,7 +149,6 @@ class DashboardController extends Controller
 
         $kehadiran = $query->get();
 
-        // Statistik
         $statistik = [
             'total_hadir' => $kehadiran->sum('hadir'),
             'total_sakit' => $kehadiran->sum('sakit'),
@@ -232,7 +222,6 @@ class DashboardController extends Controller
                 ];
             }
 
-            // Sort by date descending
             usort($backupFiles, function ($a, $b) {
                 return $b['date'] <=> $a['date'];
             });
@@ -247,13 +236,10 @@ class DashboardController extends Controller
     public function createBackup()
     {
         try {
-            // 1. Ambil user yang sedang login
             $user = Auth::user();
 
-            // 2. KIRIM TUGAS ke Antrian
             CreateBackupJob::dispatch($user);
 
-            // 3. Langsung kembalikan respons ke admin (tanpa menunggu)
             return back()->with('success',
                 'Proses backup telah dimulai di latar belakang. File akan muncul setelah selesai.');
 

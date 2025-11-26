@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class Siswa extends Model
 {
@@ -62,21 +62,6 @@ class Siswa extends Model
         return $query->where('status', 'aktif');
     }
 
-    public function scopeLulus($query)
-    {
-        return $query->where('status', 'lulus');
-    }
-
-    public function scopeKelas($query, $kelasId)
-    {
-        return $query->where('kelas_id', $kelasId);
-    }
-
-    public function scopeJenisKelamin($query, $jenisKelamin)
-    {
-        return $query->where('jenis_kelamin', $jenisKelamin);
-    }
-
     public function scopeSearch($query, $keyword)
     {
         return $query->where(function ($q) use ($keyword) {
@@ -86,23 +71,37 @@ class Siswa extends Model
         });
     }
 
+    /**
+     * Get URL foto siswa (Cloudinary Support)
+     */
     public function getFotoUrlAttribute()
     {
-        if ($this->foto && Storage::disk('public')->exists($this->foto)) {
-            return Storage::url($this->foto);
+        if (empty($this->foto)) {
+            return $this->defaultAvatar();
         }
 
-        // Default avatar berdasarkan jenis kelamin
+        if (str_starts_with($this->foto, 'http')) {
+            return $this->foto;
+        }
+
+        return 'https://res.cloudinary.com/dcucamoen/image/upload/' . $this->foto;
+    }
+
+    /**
+     * Helper untuk avatar default
+     */
+    private function defaultAvatar()
+    {
         return $this->jenis_kelamin === 'L'
-            ? asset('images/avatar-male.png')
-            : asset('images/avatar-female.png');
+             ? asset('images/avatar-male.png')
+             : asset('images/avatar-female.png');
     }
 
     public function getUmurAttribute()
     {
         return $this->tanggal_lahir
-            ? Carbon::parse($this->tanggal_lahir)->age
-            : null;
+             ? Carbon::parse($this->tanggal_lahir)->age
+             : null;
     }
 
     public function getTempatTanggalLahirAttribute()
@@ -110,7 +109,6 @@ class Siswa extends Model
         if (!$this->tanggal_lahir) {
             return '-';
         }
-
         $tanggal = Carbon::parse($this->tanggal_lahir)->isoFormat('D MMMM Y');
         return "{$this->tempat_lahir}, {$tanggal}";
     }
@@ -133,9 +131,9 @@ class Siswa extends Model
             'pindah' => 'warning',
             'keluar' => 'danger',
         ];
-
         return $badges[$this->status] ?? 'secondary';
     }
+
 
     public function getNilai($semester, $tahunAjaran)
     {
@@ -153,7 +151,6 @@ class Siswa extends Model
             ->where('tahun_ajaran', $tahunAjaran)
             ->whereNotNull('nilai_akhir')
             ->avg('nilai_akhir');
-
         return $rataRata ? round($rataRata, 2) : 0;
     }
 
@@ -166,24 +163,19 @@ class Siswa extends Model
         $rankings = [];
         foreach ($siswaKelas as $siswa) {
             $rankings[] = [
-                'siswa_id' => $siswa->id,
-                'rata_rata' => $siswa->getRataRataNilai($semester, $tahunAjaran),
+                'id' => $siswa->id,
+                'nilai' => $siswa->getRataRataNilai($semester, $tahunAjaran)
             ];
         }
 
-        // Sort descending
-        usort($rankings, function ($a, $b) {
-            return $b['rata_rata'] <=> $a['rata_rata'];
-        });
+        usort($rankings, fn($a, $b) => $b['nilai'] <=> $a['nilai']);
 
-        // Cari ranking siswa ini
-        foreach ($rankings as $index => $rank) {
-            if ($rank['siswa_id'] === $this->id) {
-                return $index + 1;
+        foreach ($rankings as $rank => $data) {
+            if ($data['id'] == $this->id) {
+                return $rank + 1;
             }
         }
-
-        return null;
+        return '-';
     }
 
     public function getKehadiran($semester, $tahunAjaran)
@@ -202,55 +194,22 @@ class Siswa extends Model
             ->first();
     }
 
-    public function isRaporLengkap($semester, $tahunAjaran)
-    {
-        $mataPelajaran = MataPelajaran::where('tingkat', $this->kelas->tingkat)->count();
-        $nilaiAda = $this->nilai()
-            ->where('semester', $semester)
-            ->where('tahun_ajaran', $tahunAjaran)
-            ->whereNotNull('nilai_akhir')
-            ->count();
-
-        $kehadiranAda = $this->kehadiran()
-            ->where('semester', $semester)
-            ->where('tahun_ajaran', $tahunAjaran)
-            ->exists();
-
-        $sikapAda = $this->sikap()
-            ->where('semester', $semester)
-            ->where('tahun_ajaran', $tahunAjaran)
-            ->exists();
-
-        return $nilaiAda === $mataPelajaran && $kehadiranAda && $sikapAda;
-    }
-
     public function getPersentaseKelengkapanRapor($semester, $tahunAjaran)
     {
-        $totalKomponen = 3; // Nilai, Kehadiran, Sikap
         $komponen = 0;
 
-        // Cek nilai
-        $mataPelajaran = MataPelajaran::where('tingkat', $this->kelas->tingkat)->count();
-        $nilaiAda = $this->nilai()
-            ->where('semester', $semester)
-            ->where('tahun_ajaran', $tahunAjaran)
-            ->whereNotNull('nilai_akhir')
-            ->count();
-        if ($nilaiAda === $mataPelajaran) {
-            $komponen++;
-        }
+        if ($this->nilai()->where('semester', $semester)->count() > 0) $komponen++;
 
-        // Cek kehadiran
-        if ($this->getKehadiran($semester, $tahunAjaran)) {
-            $komponen++;
-        }
+        if ($this->getKehadiran($semester, $tahunAjaran)) $komponen++;
 
-        // Cek sikap
-        if ($this->getSikap($semester, $tahunAjaran)) {
-            $komponen++;
-        }
+        if ($this->getSikap($semester, $tahunAjaran)) $komponen++;
 
-        return round(($komponen / $totalKomponen) * 100);
+        return round(($komponen / 3) * 100);
+    }
+
+    public function isRaporLengkap($semester, $tahunAjaran)
+    {
+        return $this->getPersentaseKelengkapanRapor($semester, $tahunAjaran) == 100;
     }
 
     public function setNamaLengkapAttribute($value)

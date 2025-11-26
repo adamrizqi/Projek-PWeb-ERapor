@@ -10,7 +10,6 @@
             @csrf
             @method('PUT')
 
-            <!-- Nama Kelas -->
             <div>
                 <label for="nama_kelas" class="block text-sm font-medium text-gray-700 mb-2">
                     Nama Kelas <span class="text-red-500">*</span>
@@ -26,7 +25,6 @@
                 @enderror
             </div>
 
-            <!-- Tingkat -->
             <div>
                 <label for="tingkat" class="block text-sm font-medium text-gray-700 mb-2">
                     Tingkat <span class="text-red-500">*</span>
@@ -46,7 +44,6 @@
                 @enderror
             </div>
 
-            <!-- Tahun Ajaran -->
             <div>
                 <label for="tahun_ajaran" class="block text-sm font-medium text-gray-700 mb-2">
                     Tahun Ajaran <span class="text-red-500">*</span>
@@ -66,7 +63,6 @@
                 @enderror
             </div>
 
-            <!-- Wali Kelas -->
             <div>
                 <label for="wali_kelas_id" class="block text-sm font-medium text-gray-700 mb-2">
                     Wali Kelas
@@ -86,7 +82,6 @@
                 @enderror
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                 <button type="button"
                         onclick="if(confirm('Yakin ingin menghapus kelas ini?')) document.getElementById('delete-form').submit()"
@@ -105,7 +100,6 @@
             </div>
         </form>
 
-        <!-- Delete Form -->
         <form id="delete-form" action="{{ route('admin.kelas.destroy', $kelas) }}" method="POST" class="hidden">
             @csrf
             @method('DELETE')

@@ -10,7 +10,6 @@
 </head>
 <body class="antialiased">
     <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <!-- Header -->
         <header class="absolute top-0 left-0 right-0 z-10">
             <nav class="container mx-auto px-6 py-4">
                 <div class="flex items-center justify-between">
@@ -37,7 +36,6 @@
             </nav>
         </header>
 
-        <!-- Hero Section -->
         <section class="container mx-auto px-6 pt-32 pb-20">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
@@ -75,7 +73,6 @@
             </div>
         </section>
 
-        <!-- Features Section -->
         <section id="fitur" class="container mx-auto px-6 py-20">
             <div class="text-center mb-16">
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">Fitur Unggulan</h3>
@@ -83,7 +80,6 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,7 +90,6 @@
                     <p class="text-gray-600">Kelola data siswa dengan mudah, termasuk foto, biodata lengkap, dan riwayat akademik.</p>
                 </div>
 
-                <!-- Feature 2 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-green-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +100,6 @@
                     <p class="text-gray-600">Input nilai pengetahuan dan keterampilan dengan perhitungan otomatis dan konversi predikat.</p>
                 </div>
 
-                <!-- Feature 3 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-purple-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,7 +110,6 @@
                     <p class="text-gray-600">Generate rapor dalam format PDF dengan desain profesional dan siap cetak.</p>
                 </div>
 
-                <!-- Feature 4 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-yellow-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +120,6 @@
                     <p class="text-gray-600">Catat kehadiran siswa dengan mudah dan lihat statistik kehadiran per kelas.</p>
                 </div>
 
-                <!-- Feature 5 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-red-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +130,6 @@
                     <p class="text-gray-600">Input deskripsi sikap spiritual dan sosial dengan template yang memudahkan.</p>
                 </div>
 
-                <!-- Feature 6 -->
                 <div class="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
                     <div class="w-16 h-16 bg-indigo-100 rounded-xl flex items-center justify-center mb-6">
                         <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,7 +142,6 @@
             </div>
         </section>
 
-        <!-- Stats Section -->
         <section class="bg-gradient-to-r from-blue-600 to-purple-600 py-20">
             <div class="container mx-auto px-6">
                 <div class="grid md:grid-cols-4 gap-8 text-center text-white">
@@ -175,7 +165,6 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <footer class="bg-gray-900 text-white py-12">
             <div class="container mx-auto px-6">
                 <div class="text-center">
@@ -188,10 +177,10 @@
                         </div>
                     </div>
                     <p class="text-gray-400 mb-4">
-                        Jl. Pendidikan No. 1, Slumbung, Jember, Jawa Timur
+                        Jl. Pendidikan No. 1, Slumbung, Blitar, Jawa Timur
                     </p>
                     <p class="text-gray-500 text-sm">
-                        &copy; {{ date('Y') }} e-Rapor SDN Slumbung 1. Dikembangkan dengan ❤️ untuk pendidikan.
+                        &copy; {{ date('Y') }} e-Rapor SDN Slumbung 1.
                     </p>
                 </div>
             </div>

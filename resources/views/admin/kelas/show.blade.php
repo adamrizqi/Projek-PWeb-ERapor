@@ -5,7 +5,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Header -->
     <div class="flex items-center justify-between">
         <div class="flex items-center space-x-4">
             <a href="{{ route('admin.kelas.index') }}" class="text-gray-600 hover:text-gray-900">
@@ -25,7 +24,6 @@
         </div>
     </div>
 
-    <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between">
@@ -80,7 +78,6 @@
         </div>
     </div>
 
-    <!-- Wali Kelas Info -->
     <x-card title="Wali Kelas">
         @if($kelas->waliKelas)
         <div class="flex items-center space-x-4">
@@ -106,7 +103,6 @@
         @endif
     </x-card>
 
-    <!-- Mata Pelajaran -->
     <x-card title="Mata Pelajaran">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($mataPelajaran as $mapel)
@@ -121,7 +117,6 @@
         </div>
     </x-card>
 
-    <!-- Daftar Siswa -->
     <x-card title="Daftar Siswa">
         <div class="mb-4 flex items-center justify-between">
             <div class="text-sm text-gray-600">

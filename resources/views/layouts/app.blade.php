@@ -4,24 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'e-Rapor SDN Slumbung 1') }} - @yield('title', 'Dashboard')</title>
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @stack('styles')
 </head>
 <body class="font-sans antialiased bg-gray-50">
     <div x-data="{ sidebarOpen: false }" class="min-h-screen">
-        <!-- Sidebar -->
         <div x-show="sidebarOpen"
              @click="sidebarOpen = false"
              class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
@@ -46,9 +38,7 @@
             @include('layouts.navigation')
         </div>
 
-        <!-- Main Content -->
         <div class="lg:pl-64">
-            <!-- Top Bar -->
             <div class="sticky top-0 z-10 flex items-center justify-between h-16 px-4 bg-white border-b border-gray-200 lg:px-8">
                 <button @click="sidebarOpen = !sidebarOpen" class="text-gray-500 lg:hidden focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +50,6 @@
                     <h1 class="text-xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h1>
                 </div>
 
-                <!-- User Menu -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="flex items-center space-x-3 focus:outline-none">
                         <div class="text-right hidden sm:block">
@@ -96,9 +85,7 @@
                 </div>
             </div>
 
-            <!-- Page Content -->
             <main class="p-4 lg:p-8">
-                <!-- Alerts -->
                 @if (session('success'))
                     <x-alert type="success" :message="session('success')" />
                 @endif
@@ -118,9 +105,8 @@
                 @yield('content')
             </main>
 
-            <!-- Footer -->
             <footer class="py-6 text-center text-sm text-gray-500 border-t border-gray-200">
-                <p>&copy; {{ date('Y') }} e-Rapor SDN Slumbung 1. Dikembangkan dengan ❤️ untuk pendidikan.</p>
+                <p>&copy; {{ date('Y') }} e-Rapor SDN Slumbung 1.</p>
             </footer>
         </div>
     </div>

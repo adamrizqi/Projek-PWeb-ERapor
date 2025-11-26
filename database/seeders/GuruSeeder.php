@@ -31,23 +31,20 @@ class GuruSeeder extends Seeder
         ];
 
         foreach ($guruList as $guru) {
-            // Cari kelas berdasarkan nama_kelas
             $kelas = Kelas::where('nama_kelas', $guru['kelas'])->first();
 
             if ($kelas) {
-                // Buat email dari nama (lowercase, tanpa gelar, tanpa spasi)
                 $emailName = strtolower(str_replace([' ', ',', '.', 'Ibu ', 'Bapak '], '', explode('S.Pd', $guru['name'])[0]));
                 $emailName = preg_replace('/[^a-z]/', '', $emailName);
                 $email = $emailName . '@sdnslumbung1.sch.id';
 
-                // Cek apakah guru sudah ada
                 $userExists = User::where('email', $email)->first();
 
                 if (!$userExists) {
                     $user = User::create([
                         'name' => $guru['name'],
                         'email' => $email,
-                        'password' => Hash::make('guru123'), // Password default
+                        'password' => Hash::make('guru123'),
                         'role' => 'guru',
                         'nip' => $guru['nip'],
                         'phone' => $guru['phone'],
@@ -56,7 +53,6 @@ class GuruSeeder extends Seeder
                         'email_verified_at' => now(),
                     ]);
 
-                    // Update kelas dengan wali_kelas_id
                     $kelas->update(['wali_kelas_id' => $user->id]);
 
                     $this->command->info("✅ Guru {$guru['name']} → Kelas {$guru['kelas']} berhasil dibuat!");

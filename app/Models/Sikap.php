@@ -146,7 +146,6 @@ class Sikap extends Model
 
         $deskripsi = $template[$kategori];
 
-        // Ambil 2-3 deskripsi secara random
         $pilihan = array_rand($deskripsi, min(3, count($deskripsi)));
 
         if (!is_array($pilihan)) {
@@ -171,7 +170,6 @@ class Sikap extends Model
 
         $deskripsi = $template[$kategori];
 
-        // Ambil 2-3 deskripsi secara random
         $pilihan = array_rand($deskripsi, min(3, count($deskripsi)));
 
         if (!is_array($pilihan)) {

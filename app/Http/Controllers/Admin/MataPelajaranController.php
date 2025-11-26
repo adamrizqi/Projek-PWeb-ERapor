@@ -16,12 +16,10 @@ class MataPelajaranController extends Controller
     {
         $query = MataPelajaran::query();
 
-        // Filter by tingkat
         if ($request->filled('tingkat')) {
             $query->where('tingkat', $request->tingkat);
         }
 
-        // Search
         if ($request->filled('search')) {
             $query->search($request->search);
         }
@@ -30,7 +28,6 @@ class MataPelajaranController extends Controller
             ->orderBy('nama_mapel')
             ->paginate(20);
 
-        // Statistik
         $statistik = [
             'total' => MataPelajaran::count(),
             'kelas_rendah' => MataPelajaran::kelasRendah()->count(),

@@ -5,7 +5,6 @@
 
 @section('content')
 <div class="space-y-6">
-    <!-- Kelas Info Card -->
     <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
         <div class="flex items-center justify-between">
             <div>
@@ -32,9 +31,7 @@
         </div>
     </div>
 
-    <!-- Progress Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Progress Nilai -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Input Nilai</h3>
@@ -48,7 +45,6 @@
             </a>
         </div>
 
-        <!-- Progress Kehadiran -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Kehadiran</h3>
@@ -62,7 +58,6 @@
             </a>
         </div>
 
-        <!-- Progress Sikap -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800">Sikap & Karakter</h3>
@@ -77,7 +72,6 @@
         </div>
     </div>
 
-    <!-- Quick Actions -->
     <x-card title="Aksi Cepat">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <a href="{{ route('guru.nilai.bulk-input') }}" class="flex flex-col items-center justify-center p-6 bg-blue-50 rounded-lg hover:bg-blue-100 transition group">
@@ -110,7 +104,6 @@
         </div>
     </x-card>
 
-    <!-- Mata Pelajaran -->
     <x-card title="Mata Pelajaran Kelas {{ $kelas->nama_kelas }}">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @foreach($mata_pelajaran as $mapel)
@@ -128,7 +121,6 @@
         </div>
     </x-card>
 
-    <!-- Daftar Siswa -->
     <x-card title="Daftar Siswa Kelas {{ $kelas->nama_kelas }}">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">

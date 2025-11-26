@@ -18,15 +18,11 @@ class CheckKelasAccess
     {
         $user = Auth::user();
 
-        // Admin punya akses ke semua kelas
         if ($user->role === 'admin') {
             return $next($request);
         }
 
-        // Guru hanya bisa akses kelas yang diampu
         if ($user->role === 'guru') {
-            // Cek parameter kelas_id di route
-            // Menangani jika parameter kelas berupa Object (Model Binding) atau ID
             $kelasParam = $request->route('kelas') ?? $request->route('kelas_id') ?? $request->input('kelas_id');
             $kelasId = null;
 
@@ -36,17 +32,12 @@ class CheckKelasAccess
                 $kelasId = $kelasParam;
             }
 
-            // Cek parameter siswa_id di route
-            // Menangani jika parameter siswa berupa Object (Model Binding) atau ID
             $siswaParam = $request->route('siswa') ?? $request->route('siswa_id') ?? $request->input('siswa_id');
 
-            // Jika ada siswa, ambil kelas dari siswa tersebut
             if ($siswaParam) {
                 if ($siswaParam instanceof Siswa) {
-                    // KASUS 1: Route Model Binding (Sudah jadi Object)
                     $kelasId = $siswaParam->kelas_id;
                 } else {
-                    // KASUS 2: Masih berupa ID (Angka/String)
                     $siswa = Siswa::find($siswaParam);
                     if ($siswa) {
                         $kelasId = $siswa->kelas_id;
@@ -54,9 +45,7 @@ class CheckKelasAccess
                 }
             }
 
-            // Validasi akses kelas
             if ($kelasId) {
-                // Cek apakah guru mengampu kelas ini
                 if ($user->kelas_id != $kelasId) {
                     Log::warning('Unauthorized kelas access attempt', [
                         'user_id' => $user->id,

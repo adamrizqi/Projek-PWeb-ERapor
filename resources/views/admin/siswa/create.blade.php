@@ -9,7 +9,6 @@
         <form action="{{ route('admin.siswa.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
-            <!-- Upload Foto -->
             <div class="flex justify-center">
                 <div x-data="{ photoPreview: null }" class="text-center">
                     <div class="mb-4">
@@ -51,11 +50,9 @@
                 </div>
             </div>
 
-            <!-- Data Identitas -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Data Identitas</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- NIS -->
                     <div>
                         <label for="nis" class="block text-sm font-medium text-gray-700 mb-2">
                             NIS <span class="text-red-500">*</span>
@@ -71,7 +68,6 @@
                         @enderror
                     </div>
 
-                    <!-- NISN -->
                     <div>
                         <label for="nisn" class="block text-sm font-medium text-gray-700 mb-2">
                             NISN
@@ -86,7 +82,6 @@
                         @enderror
                     </div>
 
-                    <!-- Nama Lengkap -->
                     <div class="md:col-span-2">
                         <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-2">
                             Nama Lengkap <span class="text-red-500">*</span>
@@ -102,7 +97,6 @@
                         @enderror
                     </div>
 
-                    <!-- Jenis Kelamin -->
                     <div>
                         <label for="jenis_kelamin" class="block text-sm font-medium text-gray-700 mb-2">
                             Jenis Kelamin <span class="text-red-500">*</span>
@@ -120,7 +114,6 @@
                         @enderror
                     </div>
 
-                    <!-- Kelas -->
                     <div>
                         <label for="kelas_id" class="block text-sm font-medium text-gray-700 mb-2">
                             Kelas <span class="text-red-500">*</span>
@@ -141,7 +134,6 @@
                         @enderror
                     </div>
 
-                    <!-- Tempat Lahir -->
                     <div>
                         <label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-2">
                             Tempat Lahir <span class="text-red-500">*</span>
@@ -157,7 +149,6 @@
                         @enderror
                     </div>
 
-                    <!-- Tanggal Lahir -->
                     <div>
                         <label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-2">
                             Tanggal Lahir <span class="text-red-500">*</span>
@@ -174,7 +165,6 @@
                         @enderror
                     </div>
 
-                    <!-- Alamat -->
                     <div class="md:col-span-2">
                         <label for="alamat" class="block text-sm font-medium text-gray-700 mb-2">
                             Alamat Lengkap <span class="text-red-500">*</span>
@@ -191,11 +181,9 @@
                 </div>
             </div>
 
-            <!-- Data Wali -->
             <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Data Wali/Orang Tua</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Nama Wali -->
                     <div>
                         <label for="nama_wali" class="block text-sm font-medium text-gray-700 mb-2">
                             Nama Wali/Orang Tua <span class="text-red-500">*</span>
@@ -211,7 +199,6 @@
                         @enderror
                     </div>
 
-                    <!-- No HP Wali -->
                     <div>
                         <label for="phone_wali" class="block text-sm font-medium text-gray-700 mb-2">
                             No. HP/WhatsApp Wali
@@ -229,7 +216,6 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
                 <a href="{{ route('admin.siswa.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
                     Batal

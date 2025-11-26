@@ -31,21 +31,16 @@ class SiswaImport implements
     */
     public function collection(Collection $rows)
     {
-        // dd($rows); // <--- SUDAH DIHAPUS AGAR IMPORT BERJALAN
 
         foreach ($rows as $row)
         {
-            // 1. Cek Duplikasi NIS
             $nis = (string) $row['nis'];
             $nisExists = Siswa::where('nis', $nis)->exists();
 
             if ($nisExists) {
-                // Lewati data ini jika NIS sudah ada
                 continue;
             }
 
-            // 2. Logika Jenis Kelamin
-            // Cek berbagai kemungkinan nama header
             $jk_raw = $row['jenis_kelamin_lp'] ?? $row['jenis_kelamin'] ?? 'L';
             if(empty($jk_raw)) $jk_raw = 'L';
 
@@ -54,16 +49,14 @@ class SiswaImport implements
                 $jenis_kelamin = 'L';
             }
 
-            // 3. Logika Tanggal Lahir [BAGIAN INI DIPERBAIKI]
-            // Mencari kunci yang sesuai dengan hasil debug Anda
-            $tgl_raw = $row['tanggal_lahir_yyyy_mm_dd'] // <-- INI KUNCI UTAMANYA
-                    ?? $row['tanggal_lahir_yyyymmdd']   // Cadangan
-                    ?? $row['tanggal_lahir']            // Cadangan (file export)
+
+            $tgl_raw = $row['tanggal_lahir_yyyy_mm_dd']
+                    ?? $row['tanggal_lahir_yyyymmdd']
+                    ?? $row['tanggal_lahir']
                     ?? null;
 
             $tanggal_lahir = null;
 
-            // Jika tanggal kosong, kita isi default hari ini atau null (agar tidak error)
             if (!empty($tgl_raw)) {
                 try {
                     if (is_numeric($tgl_raw)) {
@@ -73,15 +66,12 @@ class SiswaImport implements
                     }
                 } catch (\Exception $e) {
                     Log::warning('Gagal parse tanggal lahir NIS: ' . $nis);
-                    $tanggal_lahir = now()->format('Y-m-d'); // Fallback aman
+                    $tanggal_lahir = now()->format('Y-m-d');
                 }
             } else {
-                 // Jika kosong, lewati baris ini (opsional) atau beri default
-                 // continue;
-                 $tanggal_lahir = now()->format('Y-m-d'); // Fallback aman
+                 $tanggal_lahir = now()->format('Y-m-d');
             }
 
-            // 4. Simpan ke Database
             try {
                 Siswa::create([
                     'nis' => $nis,
@@ -102,7 +92,6 @@ class SiswaImport implements
         }
     }
 
-    // Validasi kita longgarkan agar fleksibel
     public function rules(): array
     {
         return [
@@ -111,7 +100,6 @@ class SiswaImport implements
         ];
     }
 
-    // Pesan error
     public function customValidationMessages()
     {
         return [

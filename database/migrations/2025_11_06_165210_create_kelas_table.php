@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kelas', 10); // Misal: 1A, 2B, dst
-            $table->integer('tingkat'); // 1-6 untuk SD
-            $table->string('tahun_ajaran', 9); // 2024/2025
+            $table->string('nama_kelas', 10);
+            $table->integer('tingkat');
+            $table->string('tahun_ajaran', 9);
             $table->unsignedBigInteger('wali_kelas_id')->nullable();
             $table->timestamps();
 

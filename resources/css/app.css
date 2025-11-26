@@ -8,11 +8,11 @@
 .sidebar-nav::-webkit-scrollbar {
     width: 0px;
     height: 0px;
-    background: transparent; /* Sembunyikan di Chrome/Safari */
+    background: transparent;
 }
 .sidebar-nav {
-    -ms-overflow-style: none;  /* Sembunyikan di IE/Edge */
-    scrollbar-width: none;  /* Sembunyikan di Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 @tailwind utilities;

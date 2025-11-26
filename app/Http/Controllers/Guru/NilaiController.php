@@ -308,7 +308,6 @@ class NilaiController extends Controller
 
     public function detailSiswa(Siswa $siswa)
     {
-        // Validasi akses (Middleware check.kelas sudah menangani, tapi double check aman)
         if ($siswa->kelas_id != Auth::user()->kelas_id) {
             abort(403, 'Akses ditolak');
         }

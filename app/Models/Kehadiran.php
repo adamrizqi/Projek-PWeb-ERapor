@@ -102,7 +102,7 @@ class Kehadiran extends Model
 
     public function getIsAlpaTinggiAttribute()
     {
-        return $this->alpa > 5; // Lebih dari 5 hari alpa
+        return $this->alpa > 5; 
     }
 
     public function getRekapan()

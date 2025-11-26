@@ -13,6 +13,9 @@ use App\Http\Controllers\Guru\SikapController;
 use App\Http\Controllers\Guru\RaporController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 
 Route::get('/', function () {
@@ -28,17 +31,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware('auth')->group(function () {
-    // Profile routes (semua role bisa akses)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Dashboard redirect berdasarkan role
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Dashboard Admin
     Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
     // Manajemen Kelas
@@ -48,9 +47,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Manajemen Siswa
     Route::post('siswa/import', [AdminSiswaController::class, 'import'])->name('siswa.import');
     Route::get('siswa/export/{kelas?}', [AdminSiswaController::class, 'export'])->name('siswa.export');
-
     Route::resource('siswa', AdminSiswaController::class)->parameters(['siswa' => 'siswa']);
-
     Route::post('siswa/{siswa}/pindah-kelas', [AdminSiswaController::class, 'pindahKelas'])->name('siswa.pindah-kelas');
     Route::post('siswa/{siswa}/update-status', [AdminSiswaController::class, 'updateStatus'])->name('siswa.update-status');
     Route::get('siswa/{siswa}/rapor/preview', [AdminRaporController::class, 'preview'])->name('siswa.rapor.preview');
@@ -77,7 +74,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 Route::middleware(['auth', 'guru', 'check.kelas'])->prefix('guru')->name('guru.')->group(function () {
-    // Dashboard Guru
     Route::get('/dashboard', [DashboardController::class, 'guruDashboard'])->name('dashboard');
 
     // Kelola Nilai
@@ -127,26 +123,23 @@ Route::middleware(['auth', 'guru', 'check.kelas'])->prefix('guru')->name('guru.'
     Route::get('siswa/{siswa}', [NilaiController::class, 'detailSiswa'])->name('siswa.show');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Development Routes (hapus di production)
-|--------------------------------------------------------------------------
-*/
+    Route::get('/direct-reset-password', function () {
+        return view('auth.direct-reset');
+    })->name('password.direct');
 
-if (app()->environment('local')) {
-    // Test Models
-    Route::get('/test-models', function () {
-        // ... (kode test dari sebelumnya)
-    });
-
-    // Test Middleware
-    Route::get('/test-middleware', function () {
-        return response()->json([
-            'user' => Auth::user(),
-            'role' => Auth::user()->role,
-            'message' => 'Middleware working!',
+    Route::post('/direct-reset-password', function (Request $request) {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:8',
         ]);
-    })->middleware('auth');
-}
+
+        $user = User::where('email', $request->email)->first();
+        $user->update([
+            'password' => Hash::make($request->password)
+        ]);
+
+        return redirect()->route('login')
+            ->with('status', 'Berhasil! Password untuk ' . $request->email . ' telah diganti.');
+    })->name('password.direct.store');
 
 require __DIR__.'/auth.php';
