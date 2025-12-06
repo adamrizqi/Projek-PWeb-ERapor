@@ -167,7 +167,7 @@
             </td>
             <td></td>
             <td>
-                Jember, {{ $tanggal_cetak }}<br>Wali Kelas,
+                Blitar, {{ $tanggal_cetak }}<br>Wali Kelas,
                 <div class="signature-space"></div>
                 <strong><u>{{ $wali_kelas->name }}</u></strong><br>
                 NIP. {{ $wali_kelas->nip }}
