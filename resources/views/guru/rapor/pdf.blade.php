@@ -71,10 +71,10 @@
 </head>
 <body>
     <div class="header">
-        <h2>Pemerintah Kabupaten Jember</h2>
+        <h2>Pemerintah Kabupaten Blitar</h2>
         <h3>Dinas Pendidikan</h3>
         <h1>SD Negeri Slumbung 1</h1>
-        <p>Jl. Pendidikan No. 1, Slumbung, Kec. Gandusari, Kab. Jember</p>
+        <p>Jl. Pendidikan No. 1, Slumbung, Kec. Gandusari, Kab. Blitar</p>
     </div>
 
     <div class="title">Laporan Hasil Belajar Siswa</div>

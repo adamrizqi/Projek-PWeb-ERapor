@@ -40,11 +40,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('dashboard');
 
-    // Manajemen Kelas
     Route::resource('kelas', AdminKelasController::class)->parameters(['kelas' => 'kelas']);
     Route::post('kelas/{kelas}/assign-wali', [AdminKelasController::class, 'assignWali'])->name('kelas.assign-wali');
 
-    // Manajemen Siswa
     Route::post('siswa/import', [AdminSiswaController::class, 'import'])->name('siswa.import');
     Route::get('siswa/export/{kelas?}', [AdminSiswaController::class, 'export'])->name('siswa.export');
     Route::resource('siswa', AdminSiswaController::class)->parameters(['siswa' => 'siswa']);
@@ -53,21 +51,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('siswa/{siswa}/rapor/preview', [AdminRaporController::class, 'preview'])->name('siswa.rapor.preview');
     Route::get('siswa/{siswa}/rapor/download', [AdminRaporController::class, 'download'])->name('siswa.rapor.download');
 
-    // Manajemen Mata Pelajaran
     Route::resource('mata-pelajaran', MataPelajaranController::class)->parameters(['mata_pelajaran' => 'mata_pelajaran']);
 
-    // Manajemen Guru
     Route::resource('guru', GuruController::class)->parameters(['guru' => 'guru']);
     Route::post('guru/{guru}/assign-kelas', [GuruController::class, 'assignKelas'])->name('guru.assign-kelas');
     Route::post('guru/import', [GuruController::class, 'import'])->name('guru.import');
     Route::post('guru/{guru}/reset-password', [GuruController::class, 'resetPassword'])->name('guru.reset-password');
 
-    // Laporan & Statistik
     Route::get('laporan/nilai', [DashboardController::class, 'laporanNilai'])->name('laporan.nilai');
     Route::get('laporan/kehadiran', [DashboardController::class, 'laporanKehadiran'])->name('laporan.kehadiran');
     Route::get('laporan/rekap-kelas', [DashboardController::class, 'rekapKelas'])->name('laporan.rekap-kelas');
 
-    // Backup & Restore
     Route::get('backup', [DashboardController::class, 'backup'])->name('backup');
     Route::post('backup/create', [DashboardController::class, 'createBackup'])->name('backup.create');
     Route::get('backup/download/{file}', [DashboardController::class, 'downloadBackup'])->name('backup.download');
@@ -76,7 +70,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::middleware(['auth', 'guru', 'check.kelas'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'guruDashboard'])->name('dashboard');
 
-    // Kelola Nilai
     Route::get('nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::get('nilai/siswa/{siswa}', [NilaiController::class, 'show'])->name('nilai.show');
     Route::get('nilai/siswa/{siswa}/input', [NilaiController::class, 'input'])->name('nilai.input');
